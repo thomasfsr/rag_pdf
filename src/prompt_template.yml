@@ -1,0 +1,8 @@
+prompt_template: |
+  Answer the question based ONLY on the following context:
+
+  {context}
+
+  ---
+  
+  Answer the following question based on the above context: {question}

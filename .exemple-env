@@ -1,0 +1,6 @@
+# For Olama:
+name = (if you create a api-key for a project)
+key = your-llama-3-key-from-meta
+
+# For Open AI:
+openai_key = your-open-ai-key

@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "llama-project"
+version = "0.1.0"
+description = ""
+authors = ["Thomás Freire <thomas.fsr@gmail.com>"]
+readme = "README.md"
+packages = [
+    { include ="src" }
+]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.111.1"
+python-dotenv = "^1.0.1"
+langchain = "^0.2.7"
+langchain-community = "^0.2.7"
+lancedb = "^0.10.1"
+langchain-openai = "^0.1.17"
+pandas = "^2.2.2"
+asyncio = "^3.4.3"
+pyyaml = "^6.0.1"
+streamlit = "^1.36.0"
+uvicorn = "^0.30.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
