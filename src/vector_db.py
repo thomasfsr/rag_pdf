@@ -1,9 +1,5 @@
 import os
 from dotenv import load_dotenv
-# from langchain_community.llms import Ollama
-# from langchain.chains import SimpleSequentialChain
-# from langchain.prompts import PromptTemplate
-from langchain_openai.chat_models import ChatOpenAI
 from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.schema.document import Document
@@ -20,10 +16,6 @@ class Embedding_Vector:
         self.openai_key = openai_key
         self.path_db = path_db
         self.dir_pdf_path = dir_pdf_path
-
-    def model_openai(self):
-        model = ChatOpenAI(api_key=self.openai_key)
-        return model
 
     def load_documents(self, path:str):
         doc_loader = PyPDFDirectoryLoader(path, glob= "*.pdf")

@@ -3,7 +3,6 @@ import httpx
 import asyncio
 
 FASTAPI_URL = "http://fastapi:8000/query"
-#FASTAPI_URL2 = "http://fastapi:8000/query"
 FASTAPI_URL2 = "http://localhost:8000/query"
 def run():
     # col1, col2 = st.columns([.2,.8], vertical_alignment='center')

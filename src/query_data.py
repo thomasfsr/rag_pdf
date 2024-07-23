@@ -1,7 +1,10 @@
 from langchain_community.vectorstores.lancedb import LanceDB
 from langchain.prompts import ChatPromptTemplate
+from langchain_openai.chat_models import ChatOpenAI
 from lancedb import connect
-from src.vector_db import Embedding_Vector
+
+from vector_db import Embedding_Vector
+
 from dotenv import load_dotenv
 import os
 import yaml
@@ -20,6 +23,7 @@ class LLM_Rag:
         self.lance_path = lance_path
         self.openai_key = openai_key
         self.k = k
+        self.llm = ChatOpenAI(api_key=self.openai_key, model="gpt-3.5-turbo",temperature=0.4)
 
     def query_rag(self, query_text: str):
         con = connect(self.lance_path)
@@ -32,7 +36,7 @@ class LLM_Rag:
         prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
         prompt = prompt_template.format(context=context_text, question=query_text)
 
-        model = ev.model_openai()
+        model = self.llm
         response_text = model.invoke(prompt)
 
         sources = [(doc.metadata.get("id", None), score) for doc, score in results]
@@ -41,5 +45,9 @@ class LLM_Rag:
 
 if __name__ == '__main__':
     llm = LLM_Rag(prompt_template=PROMPT_TEMPLATE, lance_path='data/.lancedb', openai_key=key, k=4)
-    response, fr= llm.query_rag('What is the title of the book?')
-    print(fr)
+    response, fr= llm.query_rag('Quais os doces finos?')
+    print(response.content)
+    response, fr= llm.query_rag('Qual o preço unitário da trufa de maracujá?')
+    print(response.content)
+    response, fr= llm.query_rag('Quanto custa 10 shiny shells?')
+    print(response.content)
