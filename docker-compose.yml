@@ -2,7 +2,8 @@ services:
   streamlit:
     build:
       context: .
-      dockerfile: Dockerfile.streamlit
+      dockerfile: Dockerfile
+      target: streamlit
     env_file:
       - .env
     ports:
@@ -15,7 +16,8 @@ services:
   fastapi:
     build:
       context: .
-      dockerfile: Dockerfile.fastapi
+      dockerfile: Dockerfile
+      target: fastapi
     env_file:
       - .env
     ports:
