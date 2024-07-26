@@ -57,3 +57,5 @@ if __name__ == '__main__':
     print(response)
     response, fr= llm.query_rag('Quanto custa 10 shiny shells?')
     print(response)
+    response, _ = llm.query_rag('Quanto fica 20 shiny shell, 20 tartelette belga, 20 piramide de whisky e 30 pavlova?')
+    print(response)

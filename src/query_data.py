@@ -44,10 +44,12 @@ class LLM_Rag:
         return response_text, formatted_response
 
 if __name__ == '__main__':
-    llm = LLM_Rag(prompt_template=PROMPT_TEMPLATE, lance_path='data/.lancedb', openai_key=key, k=4)
+    llm = LLM_Rag(prompt_template=PROMPT_TEMPLATE, lance_path='data/.lancedb', openai_key=key, k=6)
     response, fr= llm.query_rag('Quais os doces finos?')
     print(response.content)
     response, fr= llm.query_rag('Qual o preço unitário da trufa de maracujá?')
     print(response.content)
     response, fr= llm.query_rag('Quanto custa 10 shiny shells?')
+    print(response.content)
+    response, _ = llm.query_rag('Quanto fica 20 shiny shell, 20 tartelette belga, 20 piramide de whisky e 30 pavlova?')
     print(response.content)
