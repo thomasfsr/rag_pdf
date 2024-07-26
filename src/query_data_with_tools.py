@@ -26,9 +26,9 @@ class LLM_Rag:
 
         self.default_template = ChatPromptTemplate.from_messages(
             [
-                ('system', 'you are a helpful assistant that responds on the language of the question given.'),
+                ('system', 'you are a helpful assistant.'),
                 ('human', '''Answer the question based ONLY on the following context: \n {context} \n\n --- \n\n
-                 Answer polited the following question based on the above context: \n {question}''')
+                 Answer politely the following question based on the above context: \n {question}''')
             ]
         )
 
@@ -61,7 +61,7 @@ class LLM_Rag:
             ]
         )
 
-        self.tool_template = ChatPromptTemplate.from_messages([('system',"""Answer the following questions as best you can. You have access to the following tools: \n
+        self.math_tool_template = ChatPromptTemplate.from_messages([('system',"""Answer the following questions as best you can. You have access to the following tools: \n
                 {tools} \n
                 You have to consult the following context: {context}
                 Use the following format: \n
@@ -78,7 +78,7 @@ class LLM_Rag:
                 Context: {context} \n
                 Thought:{agent_scratchpad}""")])
         
-        self.tool = [Tool(name="Calculator",
+        self.math_tool = [Tool(name="Calculator",
                            func=LLMMathChain.from_llm(llm=self.llm).run,
                            description='''To calculate product and prices. Always show the calculation made.''')]
 
@@ -90,13 +90,13 @@ class LLM_Rag:
         results = db.similarity_search_with_score(query_text, k=self.k)
         context_text = "\n\n---\n\n".join([doc.page_content for doc, _score in results])
 
-        agent = create_react_agent(
+        math_agent = create_react_agent(
             llm=self.llm,
-            tools=self.tool,
-            prompt=self.tool_template,
+            tools=self.math_tool,
+            prompt=self.math_tool_template,
         )
-        agent_executor = AgentExecutor.from_agent_and_tools(
-            agent=agent, tools=self.tool, handle_parsing_errors=True, verbose=False
+        math_agent_executor = AgentExecutor.from_agent_and_tools(
+            agent=math_agent, tools=self.math_tool, handle_parsing_errors=True, verbose=False
         )
 
         model = self.llm
@@ -108,12 +108,12 @@ class LLM_Rag:
         elif class_response.split(' >')[0].lower() == 'yes':
             list_products = class_response.split('>')[1]
             context_text = context_text + list_products
-            response_text = agent_executor.invoke({'context': context_text, 'question': query_text})['output']
+            math_response_text = math_agent_executor.invoke({'context': context_text, 'question': query_text})['output']
             final_chain = self.final_template | model | StrOutputParser()
-            final_context = list_products + response_text
-            response_text =final_chain.invoke({'context': final_context, 'question': query_text})
+            final_context = list_products + math_response_text
+            final_response_text =final_chain.invoke({'context': final_context, 'question': query_text})
             translate_chain = self.translate_template | model | StrOutputParser()
-            response_text = translate_chain.invoke({'answer': response_text, 'question': query_text})
+            response_text = translate_chain.invoke({'answer': final_response_text, 'question': query_text})
 
         return response_text
 
@@ -125,5 +125,5 @@ if __name__ == '__main__':
     # print(response)
     # response = llm.query_rag('Quanto custa 10 shiny shells?')
     # print(response)
-    response = llm.query_rag('vou querer 20 shiny shell, 20 tartelette belga, 20 piramide de whisky e 30 pavlova')
+    response = llm.query_rag('Quanto fica 20 shiny shell, 20 tartelette belga, 20 piramide de whisky e 30 pavlova?')
     print(response)
