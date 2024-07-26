@@ -22,7 +22,7 @@ class LLM_Rag:
         self.lance_path = lance_path
         self.openai_key = openai_key
         self.k = k
-        self.llm = ChatOpenAI(api_key=self.openai_key, model="gpt-3.5-turbo",temperature=0.1)
+        self.llm = ChatOpenAI(api_key=self.openai_key, model="gpt-3.5-turbo",temperature=0)
 
         self.default_template = ChatPromptTemplate.from_messages(
             [
@@ -32,11 +32,28 @@ class LLM_Rag:
             ]
         )
 
+        self.final_template = ChatPromptTemplate.from_messages(
+            [
+                ('system', 'you are a helpful assistant that translates the final answer to the question language.'),
+                ('human', '''You were given the following context: \n {context} \n\n --- \n\n
+                 Answer the following question based on the above context explaining everything in details: \n {question}''')
+            ]
+        )
+
+        self.translate_template = ChatPromptTemplate.from_messages(
+            [
+                ('system', 'you are a helpful translator.'),
+                ('human', '''ONLY identifies the language in this question to be used on the text. Do NOT return it in the result: \n {question}\n\n --- \n\n
+                 Translate the following text to the language identified maintaining its structure: \n {answer}
+                 ''')
+            ]
+        )
+
         self.classify_template = ChatPromptTemplate.from_messages(
             [
                 ('system', 'you are a helpful assistant.'),
                 ('human', '''You should have to classify as YES if the
-                 question given is asking for more than one product and their prices for given quantities.
+                 question given is asking for more than one product and their prices to calculate for some quantities.
                  If YES, next to YES add > and a list of the product, quantity, - unit price with UN. Extract ONLY from the context.
                  , otherwise NO. \n---\n 
                  Question: \n {question} \n---\n
@@ -89,18 +106,24 @@ class LLM_Rag:
             chain = self.default_template | model | StrOutputParser()
             response_text = chain.invoke(input={'context': context_text, 'question': query_text})
         elif class_response.split(' >')[0].lower() == 'yes':
-            context_text = context_text + class_response.split('>')[1]
+            list_products = class_response.split('>')[1]
+            context_text = context_text + list_products
             response_text = agent_executor.invoke({'context': context_text, 'question': query_text})['output']
+            final_chain = self.final_template | model | StrOutputParser()
+            final_context = list_products + response_text
+            response_text =final_chain.invoke({'context': final_context, 'question': query_text})
+            translate_chain = self.translate_template | model | StrOutputParser()
+            response_text = translate_chain.invoke({'answer': response_text, 'question': query_text})
 
         return response_text
 
 if __name__ == '__main__':
     llm = LLM_Rag(lance_path='data/.lancedb', openai_key=key, k=6)
-    response = llm.query_rag('O que tem no Pedra da Lua?')
-    print(response)
-    response = llm.query_rag('Qual o preço unitário da trufa de maracujá?')
-    print(response)
-    response = llm.query_rag('Quanto custa 10 shiny shells?')
-    print(response)
+    # response = llm.query_rag('O que tem no Pedra da Lua?')
+    # print(response)
+    # response = llm.query_rag('Qual o preço unitário da trufa de maracujá?')
+    # print(response)
+    # response = llm.query_rag('Quanto custa 10 shiny shells?')
+    # print(response)
     response = llm.query_rag('vou querer 20 shiny shell, 20 tartelette belga, 20 piramide de whisky e 30 pavlova')
     print(response)

@@ -14,10 +14,10 @@ COPY . .
 FROM base AS streamlit
 
 # Run Streamlit
-CMD ["streamlit", "run", "app.py"]
+CMD ["streamlit", "run", "src/main_frontend.py"]
 
 # Stage 3: FastAPI Image
 FROM base AS fastapi
 
 # Run FastAPI
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["fastapi", "run", "src/api.py", "--port", "8000"]

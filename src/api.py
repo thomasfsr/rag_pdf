@@ -27,12 +27,12 @@ class QueryRequest(BaseModel):
     query_text: str
 
 async def generate_response(query_text: str) -> AsyncIterator[bytes]:
-    response, _ = llm.query_rag(query_text)
+    response = llm.query_rag(query_text)
     if response:
         # Stream response in chunks
         chunk_size = 1024
-        for i in range(0, len(response.content), chunk_size):
-            yield response.content[i:i + chunk_size].encode()
+        for i in range(0, len(response), chunk_size):
+            yield response[i:i + chunk_size].encode()
             await asyncio.sleep(0.1)  # Simulate delay for streaming
     else:
         yield b"Error generating response."
@@ -43,7 +43,3 @@ async def query_endpoint(request: QueryRequest):
         return StreamingResponse(generate_response(request.query_text), media_type="text/plain")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
