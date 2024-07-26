@@ -35,7 +35,7 @@ import yaml
 try:
     from src.vector_db import Embedding_Vector
 except:
-    from vector_db import Embedding_Vector
+    from src.vector_db import Embedding_Vector
 
 load_dotenv()
 key = os.getenv('openai_key')

@@ -3,7 +3,7 @@ from langchain.prompts import ChatPromptTemplate
 from langchain_openai.chat_models import ChatOpenAI
 from lancedb import connect
 
-from vector_db import Embedding_Vector
+from src.vector_db import Embedding_Vector
 
 from dotenv import load_dotenv
 import os
@@ -18,8 +18,8 @@ with open('src/prompt_template.yml', 'r') as pt:
     PROMPT_TEMPLATE = yaml.safe_load(pt)['prompt_template']
 class LLM_Rag:
 
-    def __init__(self, prompt_template:str, lance_path:str, openai_key:str, k:int):
-        self.prompt_template = prompt_template
+    def __init__(self, lance_path:str, openai_key:str, k:int):
+        self.prompt_template = PROMPT_TEMPLATE
         self.lance_path = lance_path
         self.openai_key = openai_key
         self.k = k
@@ -40,16 +40,16 @@ class LLM_Rag:
         response_text = model.invoke(prompt)
 
         sources = [(doc.metadata.get("id", None), score) for doc, score in results]
-        formatted_response = f"Response: {response_text}\nSources: {sources}"
-        return response_text, formatted_response
+        #formatted_response = f"Response: {response_text}\nSources: {sources}"
+        return response_text.content
 
 if __name__ == '__main__':
-    llm = LLM_Rag(prompt_template=PROMPT_TEMPLATE, lance_path='data/.lancedb', openai_key=key, k=6)
-    response, fr= llm.query_rag('Quais os doces finos?')
-    print(response.content)
-    response, fr= llm.query_rag('Qual o preço unitário da trufa de maracujá?')
-    print(response.content)
+    llm = LLM_Rag(lance_path='data/.lancedb', openai_key=key, k=6)
+    response= llm.query_rag('Quais os doces finos?')
+    print(response)
+    response= llm.query_rag('Qual o preço unitário da trufa de maracujá?')
+    print(response)
     response, fr= llm.query_rag('Quanto custa 10 shiny shells?')
-    print(response.content)
-    response, _ = llm.query_rag('Quanto fica 20 shiny shell, 20 tartelette belga, 20 piramide de whisky e 30 pavlova?')
-    print(response.content)
+    print(response)
+    response = llm.query_rag('Quanto fica 20 shiny shell, 20 tartelette belga, 20 piramide de whisky e 30 pavlova?')
+    print(response)

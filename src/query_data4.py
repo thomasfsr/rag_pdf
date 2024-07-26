@@ -4,7 +4,7 @@ from langchain_openai.chat_models import ChatOpenAI
 from langchain.schema.output_parser import StrOutputParser
 from lancedb import connect
 
-from vector_db import Embedding_Vector
+from src.vector_db import Embedding_Vector
 
 from dotenv import load_dotenv
 import os

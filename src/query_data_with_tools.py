@@ -28,7 +28,7 @@ class LLM_Rag:
             [
                 ('system', 'you are a helpful assistant that responds on the language of the question given.'),
                 ('human', '''Answer the question based ONLY on the following context: \n {context} \n\n --- \n\n
-                 Answer the following question based on the above context: \n {question}''')
+                 Answer polited the following question based on the above context: \n {question}''')
             ]
         )
 
@@ -42,9 +42,9 @@ class LLM_Rag:
 
         self.translate_template = ChatPromptTemplate.from_messages(
             [
-                ('system', 'you are a helpful translator.'),
+                ('system', 'you are a translator.'),
                 ('human', '''ONLY identifies the language in this question to be used on the text. Do NOT return it in the result: \n {question}\n\n --- \n\n
-                 Translate the following text to the language identified maintaining its structure: \n {answer}
+                 Translate the following text to the language identified, MUST maintain its structure intact: \n {answer}
                  ''')
             ]
         )
@@ -72,7 +72,7 @@ class LLM_Rag:
                 Observation: the result of the action \n
                 ... (this Thought/Action/Action Input/Observation can repeat N times) \n
                 Thought: I now know the final answer \n
-                Final Answer: the final answer to the original input question in its language. \n
+                Final Answer: the final answer to the original input question, Show the steps. \n
                 Begin! \n
                 Question: {question} \n
                 Context: {context} \n

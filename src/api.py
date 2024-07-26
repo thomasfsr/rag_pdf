@@ -7,7 +7,7 @@ import os
 from dotenv import load_dotenv
 from functools import lru_cache
 import yaml
-from src.query_data6 import LLM_Rag
+from src.query_data import LLM_Rag
 
 
 @lru_cache()
