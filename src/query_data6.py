@@ -6,7 +6,7 @@ from langchain.agents import create_react_agent, Tool, AgentExecutor
 from langchain.chains.llm_math.base import LLMMathChain
 from lancedb import connect
 
-from vector_db import Embedding_Vector
+from src.vector_db import Embedding_Vector
 
 from dotenv import load_dotenv
 import os
