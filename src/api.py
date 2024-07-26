@@ -7,7 +7,7 @@ import os
 from dotenv import load_dotenv
 from functools import lru_cache
 import yaml
-from src.query_data import LLM_Rag
+from src.query_data6 import LLM_Rag
 
 
 @lru_cache()
@@ -15,13 +15,11 @@ def get_key():
     load_dotenv()
     return os.getenv('openai_key')
 
-with open('src/prompt_template.yml', 'r') as pt_yml:
-    prompt_template = yaml.safe_load(pt_yml)['prompt_template']
-
 lance_path = "data/.lancedb"
-k = 4
 
-llm = LLM_Rag(prompt_template=prompt_template, lance_path=lance_path, openai_key=get_key(), k=k)
+k = 6
+
+llm = LLM_Rag(lance_path=lance_path, openai_key=get_key(), k=k)
 
 app = FastAPI()
 

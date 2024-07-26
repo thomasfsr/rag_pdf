@@ -2,7 +2,6 @@ from langchain_community.vectorstores.lancedb import LanceDB
 from langchain.prompts import ChatPromptTemplate
 from langchain_openai.chat_models import ChatOpenAI
 from langchain.schema.output_parser import StrOutputParser
-from langchain.schema.runnable import RunnableBranch
 from langchain.agents import create_react_agent, Tool, AgentExecutor
 from langchain.chains.llm_math.base import LLMMathChain
 from lancedb import connect
@@ -11,19 +10,15 @@ from vector_db import Embedding_Vector
 
 from dotenv import load_dotenv
 import os
-import yaml
 
 load_dotenv()
 key = os.getenv('openai_key')
 
 LANCE_PATH = "data/lancedb"
 
-with open('src/prompt_template.yml', 'r') as pt:
-    PROMPT_TEMPLATE = yaml.safe_load(pt)['prompt_template']
 class LLM_Rag:
 
-    def __init__(self, prompt_template:str, lance_path:str, openai_key:str, k:int):
-        self.prompt_template = prompt_template
+    def __init__(self, lance_path:str, openai_key:str, k:int):
         self.lance_path = lance_path
         self.openai_key = openai_key
         self.k = k
@@ -100,7 +95,7 @@ class LLM_Rag:
         return response_text
 
 if __name__ == '__main__':
-    llm = LLM_Rag(prompt_template=PROMPT_TEMPLATE, lance_path='data/.lancedb', openai_key=key, k=6)
+    llm = LLM_Rag(lance_path='data/.lancedb', openai_key=key, k=6)
     response = llm.query_rag('O que tem no Pedra da Lua?')
     print(response)
     response = llm.query_rag('Qual o preço unitário da trufa de maracujá?')

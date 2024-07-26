@@ -8,5 +8,5 @@ if page == "PDF Uploader":
     import pdf_frontend
     pdf_frontend.run()
 elif page == "RAG Chat":
-    import simple_frontend
-    simple_frontend.run()
+    import query_frontend
+    query_frontend.run()
