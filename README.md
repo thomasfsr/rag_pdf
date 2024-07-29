@@ -1,6 +1,7 @@
 # RAG application with Streamlit Interface  
-  
-To run the application just locally just clone the repo:  
+
+## Install and Run:  
+To run the application locally just clone the repo:  
 ```bash
 git clone https://github.com/thomasfsr/rag_pdf  
 ```
