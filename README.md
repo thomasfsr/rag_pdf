@@ -7,7 +7,7 @@ data
   ├── .lancedb                # LanceDB files for vector storage  
   └── file_loaded.pdf         # Exemple of a PDF loaded  
 src  
-  ├── __init__.py             # Initialize the src module  
+  ├── __ init__.py             # Initialize the src module  
   ├── api.py                  # FastAPI server   
   ├── main_frontend.py        # Main frontend application logic   
   ├── pdf_frontend.py         # Frontend for PDF loading    
