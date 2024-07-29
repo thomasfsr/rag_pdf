@@ -1,6 +1,7 @@
 # RAG application with Streamlit Interface  
   
 ## Project Structure:  
+```
 notebooks  
   └── notebook.ipynb          # Jupyter notebooks for experimentation and prototyping  
 data  
@@ -25,7 +26,8 @@ python-version                # Python version specification
 poetry.lock                   # Poetry lock file for dependencies  
 pyproject.toml                # Project configuration file  
 README.md                     # Project documentation  
-  
+```
+
 ## Install and Run:  
 To run the application locally just clone the repo:  
 ```bash
