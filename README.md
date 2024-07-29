@@ -3,7 +3,7 @@
 ## Project Structure:  
 ```
 notebooks  
-  └── notebook.ipynb                    # Jupyter notebooks for experimentation and prototyping  
+  └── notebook.ipynb                    # Jupyter notebooks for experimentation
 data            
   ├── .lancedb                          # LanceDB files for vector storage  
   └── file_loaded.pdf                   # Exemple of a PDF loaded  
