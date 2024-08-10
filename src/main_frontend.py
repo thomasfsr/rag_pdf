@@ -5,8 +5,8 @@ page = st.sidebar.selectbox("Go to", ["PDF Uploader", "RAG Chat"])
 
 # Import the pages
 if page == "PDF Uploader":
-    import pdf_frontend
+    from src import pdf_frontend
     pdf_frontend.run()
 elif page == "RAG Chat":
-    import query_frontend
+    from src import query_frontend
     query_frontend.run()

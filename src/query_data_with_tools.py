@@ -15,14 +15,15 @@ load_dotenv()
 key = os.getenv('openai_key')
 
 LANCE_PATH = "data/lancedb"
-
+gpt4mini = "gpt-4o-mini"
+gpt3turbo = "gpt-3.5-turbo"
 class LLM_Rag:
 
     def __init__(self, lance_path:str, openai_key:str, k:int):
         self.lance_path = lance_path
         self.openai_key = openai_key
         self.k = k
-        self.llm = ChatOpenAI(api_key=self.openai_key, model="gpt-3.5-turbo",temperature=0)
+        self.llm = ChatOpenAI(api_key=self.openai_key, model=gpt4mini, temperature=0)
 
         self.default_template = ChatPromptTemplate.from_messages(
             [
@@ -87,8 +88,16 @@ class LLM_Rag:
         ev = Embedding_Vector(openai_key=self.openai_key, path_db='data/.lancedb')
         db = LanceDB(connection=con, embedding= ev.get_embedding_function())
 
-        results = db.similarity_search_with_score(query_text, k=self.k)
-        context_text = "\n\n---\n\n".join([doc.page_content for doc, _score in results])
+        retriever = db.similarity_search_with_score(query_text, k=self.k)
+        context_text = "\n\n---\n\n".join([doc.page_content for doc, _ in retriever])
+
+        sources = [(doc.metadata.get('id'), doc.metadata.get('page'), score) for doc, score in retriever]
+        final_source = []
+        for _ , source in enumerate(sources):
+            sources_response = f'Source: {source[0]} \nPage: {source[1]} \nScore: {source[2]}'
+            final_source.append(sources_response)
+        
+        final_source_txt = '\n---\n'.join(final_source)
 
         math_agent = create_react_agent(
             llm=self.llm,
@@ -115,15 +124,17 @@ class LLM_Rag:
             translate_chain = self.translate_template | model | StrOutputParser()
             response_text = translate_chain.invoke({'answer': final_response_text, 'question': query_text})
 
-        return response_text
+        return response_text, final_source_txt, retriever
 
 if __name__ == '__main__':
-    llm = LLM_Rag(lance_path='data/.lancedb', openai_key=key, k=6)
+    llm = LLM_Rag(lance_path='data/.lancedb', openai_key=key, k=2)
     # response = llm.query_rag('O que tem no Pedra da Lua?')
     # print(response)
     # response = llm.query_rag('Qual o preço unitário da trufa de maracujá?')
     # print(response)
     # response = llm.query_rag('Quanto custa 10 shiny shells?')
     # print(response)
-    response = llm.query_rag('Quanto fica 20 shiny shell, 20 tartelette belga, 20 piramide de whisky e 30 pavlova?')
+    response, sources, retriever = llm.query_rag('Qual o nome da confeiteira?')
     print(response)
+    print('\n')
+    print(sources)
